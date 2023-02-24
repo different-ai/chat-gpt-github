@@ -10,6 +10,7 @@ import Github from "../components/GitHub";
 import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 import ResizablePanel from "../components/ResizablePanel";
+import remarkGfm from 'remark-gfm'
 
 const Home: NextPage = () => {
   const [repositoryUrl, setRepositoryUrl] = useState("");
@@ -267,8 +268,8 @@ const Home: NextPage = () => {
                       Answer
                     </h2>
                   </div>
-                  <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
-                    <ReactMarkdown>{answer}</ReactMarkdown>
+                  <div className="space-y-8 flex flex-col max-w-xl mx-auto">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
                   </div>
                 </>
               )}
