@@ -91,7 +91,9 @@ const syncRepository = async (files: any[], vaultId: string) => {
         }));
     });
     console.log('documents', documents);
-    return fetch(url + "/v1/" + githubRepoToVault(vaultId), {
+    const fullUrl = url + "/v1/" + githubRepoToVault(vaultId);
+    console.log('fullUrl', fullUrl);
+    return fetch(fullUrl, {
         method: "POST",
         headers: {
             Authorization: "Bearer " + apiKey,

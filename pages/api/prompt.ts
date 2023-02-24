@@ -9,8 +9,9 @@ const url = "https://embedbase-hosted-usx5gpslaq-uc.a.run.app";
 const apiKey = process.env.EMBEDBASE_API_KEY;
 
 const search = async (query: string, vaultId: string) => {
-    // url encoded vault
-    return fetch(url + "/v1/" + githubRepoToVault(vaultId) + "/search", {
+    const fullUrl = url + "/v1/" + githubRepoToVault(vaultId) + "/search";
+    console.log('fullUrl', fullUrl);
+    return fetch(fullUrl, {
         method: "POST",
         headers: {
             Authorization: "Bearer " + apiKey,
@@ -31,7 +32,7 @@ const createContext = async (question: string, vaultId: string, maxLen = 1800) =
 
 export default async function buildPrompt(req: any, res: any) {
     const prompt = req.body.question;
-    const vaultId = req.body.repositoryUrl;
+    const vaultId = req.body.repositoryUrl.trim();
 
     const context = await createContext(prompt, vaultId);
     const newPrompt = `Answer the question based on the context below, and if the question can't be answered based on the context, say "I don't know"\n\nContext: ${context}\n\n---\n\nQuestion: ${prompt}\nAnswer:`;
