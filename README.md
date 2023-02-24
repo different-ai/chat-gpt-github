@@ -1,27 +1,32 @@
-# [TwitterBio.com](https://www.twitterbio.com/)
+# Embedbase Github Ask
 
-This project generates Twitter bios for you using AI.
+This is a template for creating a **ChatGPT-powered QA Github Repository** thanks to [Embedbase](https://embedbase.xyz) and [OpenAI](https://openai.com).
 
-[![Twitter Bio Generator](./public/screenshot.png)](https://www.twitterbio.com)
 
 ## How it works
 
-This project uses the [OpenAI GPT-3 API](https://openai.com/api/) (specifically, text-davinci-003) and [Vercel Edge functions](https://vercel.com/features/edge-functions) with streaming. It constructs a prompt based on the form and user input, sends it to the GPT-3 API via a Vercel Edge function, then streams the response back to the application.
+* we index `.py` files with [Embedbase](https://github.com/another-ai/embedbase)
+* when you search, we use semantic search with [Embedbase](https://github.com/another-ai/embedbase) to find the most relevant snippets
+* we then ask GPT-3 to give a summary of the snippets
 
-Video and blog post coming soon on how to build apps with OpenAI and Vercel Edge functions!
 
-## Running Locally
+![ezgif com-video-to-gif (1)](https://user-images.githubusercontent.com/11430621/220747631-f69cf532-e464-4ec1-ac04-75018f77d561.gif)
 
-After cloning the repo, go to [OpenAI](https://beta.openai.com/account/api-keys) to make an account and put your API key in a file called `.env`.
 
-Then, run the application in the command line and it will be available at `http://localhost:3000`.
+## Quick Start
 
-```bash
-npm run dev
-```
+Click the button to clone this repository and deploy it on Vercel:
 
-## One-Click Deploy
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fanother-ai%2Fchat-gpt-github&env=EMBEDBASE_API_KEY,OPENAI_API_KEY&envDescription=Get%20your%20API%20key%20on%20Embedbase%20website%20at%20https%3A%2F%2Fapp.embedbase.xyz%20and%20your%20OpenAI%20key%20at%20https%3A%2F%2Fplatform.openai.com%2Faccount%2Fapi-keys)
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
+Remember to add `EMBEDBASE_API_KEY` to your [repository secrets](https://docs.github.com/en/rest/actions/secrets) to automatically sync your documentation to [Embedbase](https://embedbase.xyz) on push.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Nutlope/twitterbio&env=OPENAI_API_KEY&project-name=twitter-bio-generator&repo-name=twitterbio)
+## Local Development
+
+First, run `pnpm i` to install the dependencies.
+
+Then, run `pnpm dev` to start the development server and visit localhost:3000.
+
+## License
+
+This project is licensed under the MIT License.
