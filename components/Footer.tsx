@@ -34,7 +34,7 @@ export default function Footer() {
       </div>
       <div className="flex space-x-4 pb-4 sm:pb-0">
         <Link
-          href="https://github.com/another-ai/embedbase-github-semantic-search"
+          href="https://github.com/another-ai/chat-gpt-github"
           className="group"
           aria-label="TaxPal on GitHub"
         >
