@@ -16,19 +16,13 @@ export default function Header() {
           Repository GPT
         </h1>
       </Link>
-      <a
-        href="https://vercel.com/templates/next.js/twitter-bio"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Image
-          alt="Vercel Icon"
-          src="/vercelLogo.png"
-          className="sm:w-8 sm:h-[27px] w-8 h-[28px]"
-          width={32}
-          height={28}
-        />
-      </a>
+      <Image
+        alt="Vercel Icon"
+        src="/vercelLogo.png"
+        className="sm:w-8 sm:h-[27px] w-8 h-[28px]"
+        width={32}
+        height={28}
+      />
     </header>
   );
 }

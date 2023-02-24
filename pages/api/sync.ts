@@ -1,4 +1,5 @@
 import { Octokit } from "octokit";
+import { githubRepoToVault } from "../../utils/hacks";
 const octokit = new Octokit();
 
 const mockGithubApi = process.env.MOCK_GITHUB_API === "true";
@@ -79,7 +80,7 @@ const url = "https://embedbase-hosted-usx5gpslaq-uc.a.run.app";
 const apiKey = process.env.EMBEDBASE_API_KEY;
 
 const syncRepository = async (files: any[], vaultId: string) => {
-    console.log('syncing', files);
+    console.log('syncing', files, vaultId);
     // read all files under path/* under *.py
     // for each file, read the content
     // for each function in the file, create a document with the path+function name as the id and the function code as the data
@@ -90,7 +91,7 @@ const syncRepository = async (files: any[], vaultId: string) => {
         }));
     });
     console.log('documents', documents);
-    return fetch(url + "/v1/" + vaultId, {
+    return fetch(url + "/v1/" + githubRepoToVault(vaultId), {
         method: "POST",
         headers: {
             Authorization: "Bearer " + apiKey,
@@ -144,13 +145,7 @@ export default async function sync(req: any, res: any) {
         res.status(400).json({ error: "Invalid repository URL" });
         return;
     }
-
-    const vaultId = req.body.vaultId?.trim() || "";
-
-    if (!vaultId) {
-        res.status(400).json({ error: "Invalid vaultId" });
-        return;
-    }
+    console.log('sync', repositoryUrl);
 
     // read the repo and sync with Embedbase
     const [owner, repo] = repositoryUrl.split("/").slice(-2);
@@ -160,7 +155,7 @@ export default async function sync(req: any, res: any) {
         files.push(file);
         if (files.length % batchSize === 0) {
             try {
-                await syncRepository(files, vaultId);
+                await syncRepository(files, repositoryUrl);
                 files = [];
             } catch (error: any) {
                 res.status(500).json({ error: error });
@@ -169,7 +164,7 @@ export default async function sync(req: any, res: any) {
         }
     }
     try {
-        await syncRepository(files, vaultId);
+        await syncRepository(files, repositoryUrl);
     } catch (error: any) {
         res.status(500).json({ error: error });
         return;
