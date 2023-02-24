@@ -12,8 +12,6 @@ import LoadingDots from "../components/LoadingDots";
 import ResizablePanel from "../components/ResizablePanel";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-
 const Home: NextPage = () => {
   const [repositoryUrl, setRepositoryUrl] = useState("");
   const [question, setQuestion] = useState("");
@@ -272,21 +270,9 @@ const Home: NextPage = () => {
                     <ReactMarkdown
                       components={{
                         code({ node, inline, className, children, ...props }) {
-                          const match = /language-(\w+)/.exec(className || '')
-                          return !inline && match ? (
-                            <SyntaxHighlighter
+                          return <SyntaxHighlighter
                               children={String(children).replace(/\n$/, '')}
-                              // @ts-ignore
-                              style={dark}
-                              language={match[1]}
-                              PreTag="div"
-                              {...props}
                             />
-                          ) : (
-                            <code className={className} {...props}>
-                              {children}
-                            </code>
-                          )
                         }
 
                       }}
