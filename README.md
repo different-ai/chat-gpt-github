@@ -9,9 +9,7 @@ This is a template for creating a **ChatGPT-powered QA Github Repository** thank
 * when you search, we use semantic search with [Embedbase](https://github.com/another-ai/embedbase) to find the most relevant snippets
 * we then ask GPT-3 to give a summary of the snippets
 
-
-![ezgif com-video-to-gif (1)](https://user-images.githubusercontent.com/11430621/220747631-f69cf532-e464-4ec1-ac04-75018f77d561.gif)
-
+![ezgif com-crop](https://user-images.githubusercontent.com/25003283/221253323-0b530c2f-b8e2-4e3e-9720-ffcfecc6deae.gif)
 
 ## Quick Start
 
