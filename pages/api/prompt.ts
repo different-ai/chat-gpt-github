@@ -5,10 +5,9 @@ if (!process.env.OPENAI_API_KEY) {
 }
 
 const url = "https://embedbase-hosted-usx5gpslaq-uc.a.run.app";
-const vaultId = "github";
 const apiKey = process.env.EMBEDBASE_API_KEY;
 
-const search = async (query: string) => {
+const search = async (query: string, vaultId: string) => {
     return fetch(url + "/v1/" + vaultId + "/search", {
         method: "POST",
         headers: {
@@ -21,16 +20,18 @@ const search = async (query: string) => {
     }).then(response => response.json());
 };
 
-const createContext = async (question: string, maxLen = 1800) => {
-    const searchResponse = await search(question);
+const createContext = async (question: string, vaultId: string, maxLen = 1800) => {
+    const searchResponse = await search(question, vaultId);
+    console.log('searchResponse', searchResponse);
     return merge(searchResponse.similarities.map((r: any) => r.data));
 }
 
 
 export default async function buildPrompt(req: any, res: any) {
-    const prompt = req.body.prompt;
+    const prompt = req.body.question;
+    const vaultId = req.body.vaultId;
 
-    const context = await createContext(prompt);
+    const context = await createContext(prompt, vaultId);
     const newPrompt = `Answer the question based on the context below, and if the question can't be answered based on the context, say "I don't know"\n\nContext: ${context}\n\n---\n\nQuestion: ${prompt}\nAnswer:`;
 
     res.status(200).json({ prompt: newPrompt });

@@ -39,7 +39,7 @@ const Home: NextPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          repositoryUrl,
+          repositoryUrl: repositoryUrl,
         }),
       })
         .then((res) => res.json())
@@ -65,7 +65,8 @@ const Home: NextPage = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        question,
+        question: question,
+        repositoryUrl: repositoryUrl,
       }),
     });
     const promptData = await promptResponse.json();
@@ -226,8 +227,17 @@ const Home: NextPage = () => {
 
           {!isLoading && (
             <button
-              className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
+              className={
+                "bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full" +
+                (!repositoryUrl || !question ? " opacity-50 cursor-not-allowed" : "")
+              }
               onClick={(e) => getAnswer(e)}
+              disabled={!repositoryUrl || !question}
+              aria-label={
+                !repositoryUrl ? "Please enter a valid repository URL" :
+                !question ? "Please enter a question" : ""
+              }
+              aria-disabled={!repositoryUrl || !question}
             >
               Ask &rarr;
             </button>
