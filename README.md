@@ -1,4 +1,4 @@
-# Embedbase Github Ask
+# ChatGPT Github
 
 This is a template for creating a **ChatGPT-powered QA Github Repository** thanks to [Embedbase](https://embedbase.xyz) and [OpenAI](https://openai.com).
 
