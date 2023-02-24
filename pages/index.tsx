@@ -11,6 +11,8 @@ import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 import ResizablePanel from "../components/ResizablePanel";
 import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 const Home: NextPage = () => {
   const [repositoryUrl, setRepositoryUrl] = useState("");
@@ -21,7 +23,6 @@ const Home: NextPage = () => {
   const [isLoadingRepositoryUrl, setIsLoadingRepositoryUrl] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("Streamed response: ", answer);
 
   useEffect(() => {
     setLastKeyStrokeOnRepositoryUrl(Date.now());
@@ -45,12 +46,11 @@ const Home: NextPage = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log("Synced repository: ", data);
           toast.success("Synced repository!");
         })
         .catch((err) => {
           console.log("Error syncing repository: ", err);
-          toast.error("Error syncing repository." + err);
+          toast.error("Error syncing repository.");
         })
         .finally(() => setIsLoadingRepositoryUrl(false));
     }
@@ -155,61 +155,61 @@ const Home: NextPage = () => {
             {/* small icon showing whether it is a correct github repository using check or cross */}
             {/* hovering the icon shows a tooltip with a message */}
             <div className="flex items-center">
-            {
-              // if is loading, show a spinner
-              isLoadingRepositoryUrl ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 animate-spin text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              ) :
-              // if the repository url is valid
-              // show a check icon
-              // else show a cross icon
-              /https:\/\/github.com\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-]+/.test(
-                repositoryUrl
-              ) ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-green-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-red-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              )
-            }
+              {
+                // if is loading, show a spinner
+                isLoadingRepositoryUrl ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 animate-spin text-gray-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                ) :
+                  // if the repository url is valid
+                  // show a check icon
+                  // else show a cross icon
+                  /https:\/\/github.com\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-]+/.test(
+                    repositoryUrl
+                  ) ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-red-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  )
+              }
             </div>
           </div>
           <div className="flex mb-5 items-center space-x-3">
@@ -236,7 +236,7 @@ const Home: NextPage = () => {
               disabled={!repositoryUrl || !question}
               aria-label={
                 !repositoryUrl ? "Please enter a valid repository URL" :
-                !question ? "Please enter a question" : ""
+                  !question ? "Please enter a question" : ""
               }
               aria-disabled={!repositoryUrl || !question}
             >
@@ -268,8 +268,29 @@ const Home: NextPage = () => {
                       Answer
                     </h2>
                   </div>
-                  <div className="space-y-8 flex flex-col max-w-xl mx-auto">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
+                  <div className="flex flex-col items-start justify-start text-left px-4 mt-12 sm:mt-20">
+                    <ReactMarkdown
+                      components={{
+                        code({ node, inline, className, children, ...props }) {
+                          const match = /language-(\w+)/.exec(className || '')
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              children={String(children).replace(/\n$/, '')}
+                              // @ts-ignore
+                              style={dark}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                            />
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          )
+                        }
+
+                      }}
+                      remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
                   </div>
                 </>
               )}

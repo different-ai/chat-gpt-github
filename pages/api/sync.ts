@@ -1,6 +1,8 @@
 import { Octokit } from "octokit";
 import { githubRepoToVault } from "../../utils/hacks";
-const octokit = new Octokit();
+const octokit = new Octokit(process.env.GITHUB_TOKEN ?{
+    auth: process.env.GITHUB_TOKEN,
+} : {});
 
 const mockGithubApi = process.env.MOCK_GITHUB_API === "true";
 // fucking hack because of rate limits
@@ -63,7 +65,7 @@ const getUntilNoSpace = (allLines: string[], i: number) => {
     return ret.join("\n");
 }
 
-function* getFunctions(code: string) {
+function getFunctions(code: string) {
     const allLines = code.split("\n");
     for (let i = 0; i < allLines.length; i++) {
         const l = allLines[i];
@@ -71,7 +73,7 @@ function* getFunctions(code: string) {
             const code = getUntilNoSpace(allLines, i);
             const functionName = getFunctionName(code);
             // line of code also
-            yield { code, functionName, line: i };
+            return { code, functionName, line: i };
         }
     }
 }
@@ -80,16 +82,40 @@ const url = "https://embedbase-hosted-usx5gpslaq-uc.a.run.app";
 const apiKey = process.env.EMBEDBASE_API_KEY;
 
 const syncRepository = async (files: any[], vaultId: string) => {
-    console.log('syncing', files, vaultId);
     // read all files under path/* under *.py
     // for each file, read the content
     // for each function in the file, create a document with the path+function name as the id and the function code as the data
-    const documents = files.flatMap((f) => {
-        return Array.from(getFunctions(f.content)).map((func) => ({
-            id: `${f.path}/${func.functionName}/${func.line}`,
-            data: func.code,
-        }));
-    });
+    const documents = files
+        .filter((f) => f.path.endsWith(".py"))
+        .flatMap((f) => {
+            // console.log('f', f);
+            // const functions = getFunctions(f.content);
+            // if (!functions) {
+            //     return [];
+            // }
+            // console.log('functions', functions);
+
+            // const { code, functionName, line } = functions;
+            // stupid mode, split file in chunks every 100 lines
+            const code = f.content;
+            const lines = code.split("\n");
+            const chunks = [];
+            for (let i = 0; i < lines.length; i += 100) {
+                chunks.push(lines.slice(i, i + 100).join("\n"));
+            }
+            return chunks.map((c, i) => {
+                return {
+                    id: `${f.path}/${i}`,
+                    data: c,
+                };
+            });
+
+            // return {
+            //     // id: `${f.path}/${functionName}/${line}`,
+            //     id: `${f.path}`,
+            //     data: code,
+            // };
+        });
     console.log('documents', documents);
     const fullUrl = url + "/v1/" + githubRepoToVault(vaultId);
     console.log('fullUrl', fullUrl);
@@ -106,7 +132,7 @@ const syncRepository = async (files: any[], vaultId: string) => {
 };
 
 // define a function to read the contents of a directory recursively
-async function* readDirectoryRecursive(owner: string, repo: string, path: string): AsyncGenerator<any> {
+const readDirectoryRecursive = async (files: any[], owner: string, repo: string, path: string): Promise<void> => {
     // fetch the contents of the repository
     const response = await octokit.rest.repos.getContent({
         owner,
@@ -126,14 +152,14 @@ async function* readDirectoryRecursive(owner: string, repo: string, path: string
                 repo,
                 path: item.path,
             });
-            yield {
+            files.push({
                 ...item,
                 // @ts-ignore
                 content: Buffer.from(fileResponse.data.content, "base64").toString(),
-            }
+            });
         } else if (item.type === "dir") {
             // recursively read the contents of the subdirectory
-            readDirectoryRecursive(owner, repo, item.path);
+            readDirectoryRecursive(files, owner, repo, item.path);
         }
     }
 }
@@ -151,14 +177,16 @@ export default async function sync(req: any, res: any) {
 
     // read the repo and sync with Embedbase
     const [owner, repo] = repositoryUrl.split("/").slice(-2);
-    let files = [];
+    let filesUnprocessed = [];
     const batchSize = 100;
-    for await (const file of readDirectoryRecursive(owner, repo, "")) {
-        files.push(file);
-        if (files.length % batchSize === 0) {
+    const files: any[] = [];
+    await readDirectoryRecursive(files, owner, repo, "");
+    for (const file of files) {
+        filesUnprocessed.push(file);
+        if (filesUnprocessed.length % batchSize === 0) {
             try {
-                await syncRepository(files, repositoryUrl);
-                files = [];
+                await syncRepository(filesUnprocessed, repositoryUrl);
+                filesUnprocessed = [];
             } catch (error: any) {
                 res.status(500).json({ error: error });
                 return;
