@@ -5,7 +5,7 @@ This is a template for creating a **ChatGPT-powered QA Github Repository** thank
 
 ## How it works
 
-* we index `.py` files with [Embedbase](https://github.com/another-ai/embedbase)
+* we index `Python, JS, TS, MD` files with [Embedbase](https://github.com/another-ai/embedbase)
 * when you search, we use semantic search with [Embedbase](https://github.com/another-ai/embedbase) to find the most relevant snippets
 * we then ask GPT-3 to give a summary of the snippets
 
