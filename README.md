@@ -24,12 +24,43 @@ Click the button to clone this repository and deploy it on Vercel:
 
 Remember to add `EMBEDBASE_API_KEY` to your [repository secrets](https://docs.github.com/en/rest/actions/secrets) to automatically sync your documentation to [Embedbase](https://embedbase.xyz) on push.
 
-## Local Development
+## Local Deployment Using Docker Compose
+To get started with local deployment, you'll need Docker Compose. If you don't already have it installed, you can download it from the official Docker website.
 
-First, run `pnpm i` to install the dependencies.
+After installing Docker Compose, you can initiate the local deployment process.
 
-Then, run `pnpm dev` to start the development server and visit localhost:3000.
+### Environment Configuration
+To set up your environment, you need to create a .env file. You can do this by copying the .env.example file included in this repository. Run the following command:
+
+```sh
+cp .env.example .env
+```
+
+This command will create a new file named .env that's an exact copy of .env.example. Open this .env file and fill in the respective values.
+
+The variables you'll need to fill include:
+
+```
+OPENAI_API_KEY=
+EMBEDBASE_API_KEY=
+GITHUB_TOKEN=
+```
+
+Save your changes and exit the file.
+
+### Start the Project
+With your environment variables set, you can now launch the application locally. Run the following command:
+```sh
+docker-compose up
+```
+
+This command will start all services defined in the docker-compose.yml file. Once all services are up, you should be able to access the application by navigating to localhost:3000 in your web browser.
 
 ## License
 
 This project is licensed under the MIT License.
+
+
+OPENAI_API_KEY=
+EMBEDBASE_API_KEY=
+GITHUB_TOKEN=
