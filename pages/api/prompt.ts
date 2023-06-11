@@ -35,7 +35,7 @@ export default async function buildPrompt(req: any, res: any) {
     const vaultId = req.body.repositoryUrl.trim();
 
     const context = await createContext(prompt, vaultId);
-    const newPrompt = `Answer the question based on the context below, and if the question can't be answered based on the context, say "I don't know"\n\nContext: ${context}\n\n---\n\nQuestion: ${prompt}\nAnswer:`;
+    const newPrompt = `As an expert developper, answer the question based on the context below, and if the question can't be answered based on the context, provide me a confidence score (percentage ). If the question is about adding code and it is possible provide the code we'll need to add, including line numbers and files \n\nContext: ${context}\n\n---\n\nQuestion: ${prompt}\nAnswer:`;
 
     res.status(200).json({ prompt: newPrompt });
 }
