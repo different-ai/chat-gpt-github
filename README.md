@@ -59,8 +59,3 @@ This command will start all services defined in the docker-compose.yml file. Onc
 ## License
 
 This project is licensed under the MIT License.
-
-
-OPENAI_API_KEY=
-EMBEDBASE_API_KEY=
-GITHUB_TOKEN=
